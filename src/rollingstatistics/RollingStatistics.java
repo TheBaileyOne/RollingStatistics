@@ -120,45 +120,77 @@ public class RollingStatistics {
                     case 2:
                         valid = true;
                         System.out.println("Which unit would you like to configure maximum data age? 1)seconds 2)minutes 3)hours 4)days "); 
-                        try{
-                            Duration duration = Duration.ZERO;
-                            do{
+                        do{
+                            excep = false;
+                            try{
+                                Duration duration = Duration.ZERO;
+                                //do{
                                 choice = reader.nextInt();
-                                switch(choice){
-                                    case 1:
-                                        System.out.println("Input max age (seconds)");
-                                        int secs = reader.nextInt();
-                                        duration = Duration.ofSeconds(secs);
-                                        val = true;
-                                        break;
-                                    case 2:
-                                        System.out.println("Input max age (minutes)");
-                                        int mins = reader.nextInt();
-                                        duration = Duration.ofMinutes(mins);
-                                        val = true;
-                                        break;
-                                    case 3:
-                                        System.out.println("Input max age (hours)");
-                                        int hours = reader.nextInt();
-                                        duration = Duration.ofHours(hours);
-                                        val = true;
-                                        break;
-                                    case 4: 
-                                        System.out.println("Input max age (days)");
-                                        int days = reader.nextInt();
-                                        duration = Duration.ofDays(days);
-                                        val = true;
-                                        break;
-                                    default:
-                                        System.out.println("invalid input. choose: 1)seconds 2)minutes 3)hours 4)days");
-                                }
-                            }while(!val);
-                            set = new DataSet(duration);
-                        }
-                        catch(InputMismatchException a){
-                            System.out.println("invalid integer value of seconds");
-                            reader.next();
-                        }
+                                do{
+                                    excep = false;
+                                    switch(choice){
+                                        case 1:
+                                            System.out.println("Input max age of data (seconds)");
+                                            try{
+                                                int secs = reader.nextInt();
+                                                duration = Duration.ofSeconds(secs);
+                                            }
+                                            catch(InputMismatchException a){
+                                                System.out.println("Invalid input - input integer value");
+                                                excep = true;
+                                                reader.next();
+                                            }
+                                            break;
+                                        case 2:
+                                            try{
+                                                System.out.println("Input max age of data (minutes)");
+                                                int mins = reader.nextInt();
+                                                duration = Duration.ofMinutes(mins);
+                                            }
+                                            catch(InputMismatchException a){
+                                                System.out.println("Invalid input - input integer value");
+                                                excep = true;
+                                                reader.next();
+                                            }
+                                            break;
+                                        case 3:
+                                            try{
+                                                System.out.println("Input max age of data (hours)");
+                                                int hours = reader.nextInt();
+                                                duration = Duration.ofHours(hours);
+                                            }
+                                            catch(InputMismatchException a){
+                                                System.out.println("Invalid input - input integer value");
+                                                excep = true;
+                                                reader.next();
+                                            }
+                                            break;
+                                        case 4: 
+                                            try{
+                                                System.out.println("Input max age of data (days)");
+                                                int days = reader.nextInt();
+                                                duration = Duration.ofDays(days);
+                                            }
+                                            catch(InputMismatchException a){
+                                                System.out.println("Invalid input - input integer value");
+                                                excep = true;
+                                                reader.next();
+                                            }
+                                            break;
+                                        default:
+                                            System.out.println("invalid input. choose: 1)seconds 2)minutes 3)hours 4)days");
+                                            reader.next();
+                                            excep = true;
+                                    }
+                                }while(excep);
+                                set = new DataSet(duration);
+                            }
+                            catch(InputMismatchException a){
+                                System.out.println("invalid input. choose: 1)seconds 2)minutes 3)hours 4)days");
+                                reader.next();
+                                excep = true;
+                            }
+                        }while(excep);
                         break;
                     default:
                         System.out.println("Invalid option choice, type 1 or 2:");
@@ -269,7 +301,7 @@ public class RollingStatistics {
                 reader.next();
                 excep = true;
             }
-            System.out.println("Type 1 to choose statistic viewing option again");
+            System.out.println("Type 1 to choose statistic viewing option again (any other character to exit)");
             try{
                 input = reader.next();
                 if(input.equals("1")){
