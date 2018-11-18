@@ -217,7 +217,7 @@ public class RollingStatistics {
     public static void getData(DataSet set){
         Scanner reader = new Scanner(System.in);
         System.out.println("Start inputting data, to exit type 'x'");
-        int data;
+        double data;
         String input;
         boolean excep;
         boolean exit;
@@ -240,7 +240,7 @@ public class RollingStatistics {
                 }
                 else{
                     try{
-                        data = Integer.parseInt(input);
+                        data = Double.parseDouble(input);
                         set.addData(data); 
                     }
                     catch(NumberFormatException e){
