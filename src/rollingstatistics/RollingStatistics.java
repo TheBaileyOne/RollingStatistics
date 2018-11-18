@@ -8,6 +8,7 @@ import java.time.*;
 public class RollingStatistics {
 
     /**
+     * Main method to decide choose whether to use predetermined test data or input own data
      * @param args the command line arguments
      * @throws java.lang.InterruptedException
      */
@@ -26,10 +27,11 @@ public class RollingStatistics {
                         testItems();
                         break;
                     case 2:
-                        getInputs();
+                        configureInputs();
                         break;
                     default:
                         System.out.println("Invalid option choice, type 1 or 2:");
+                        excep = true;
                 }
             }
             catch (InputMismatchException e) {
@@ -42,6 +44,10 @@ public class RollingStatistics {
         
         
     }
+    /**
+     * Method to run the program with test inputs, in order to test key features
+     * @throws InterruptedException 
+     */
     public static void testItems() throws InterruptedException{
         DataSet test1 = new DataSet(8);
         test1.addData(3);
@@ -89,15 +95,18 @@ public class RollingStatistics {
         
         
     }
-    public static void getInputs(){
-        boolean exit = false;
+    /**
+     * Method to configure the setup of the DataSet for analysis
+     * Configuration based on length or timestamp of data
+     * Exception handling included
+     */
+    public static void configureInputs(){
         Scanner reader = new Scanner(System.in);
-        boolean valid = false;
-        boolean val = false;
         DataSet set = null;
         boolean excep;
         System.out.println("Would you like configure data set by 1)length or 2)time");
         do{
+            excep = false;
             try{
                 int choice = reader.nextInt();
                 switch(choice){
@@ -108,7 +117,6 @@ public class RollingStatistics {
                             try{
                                 int maxLength = reader.nextInt();
                                 set = new DataSet(maxLength);
-                                valid = true;
                             }
                             catch(InputMismatchException a){
                                 System.out.println("invalid integer value of legnth");
@@ -118,15 +126,13 @@ public class RollingStatistics {
                         }while(excep);
                         break;
                     case 2:
-                        valid = true;
                         System.out.println("Which unit would you like to configure maximum data age? 1)seconds 2)minutes 3)hours 4)days "); 
                         do{
                             excep = false;
                             try{
-                                Duration duration = Duration.ZERO;
-                                //do{
-                                choice = reader.nextInt();
+                                Duration duration = Duration.ZERO;                             
                                 do{
+                                    choice = reader.nextInt();
                                     excep = false;
                                     switch(choice){
                                         case 1:
@@ -179,7 +185,6 @@ public class RollingStatistics {
                                             break;
                                         default:
                                             System.out.println("invalid input. choose: 1)seconds 2)minutes 3)hours 4)days");
-                                            reader.next();
                                             excep = true;
                                     }
                                 }while(excep);
@@ -194,18 +199,28 @@ public class RollingStatistics {
                         break;
                     default:
                         System.out.println("Invalid option choice, type 1 or 2:");
-                        reader.next();
+                        excep = true;
                     }
             }
             catch (InputMismatchException a) {
                 System.out.println("Please type integer choice: 1)length or 2)time: ");
                 reader.nextLine();
+                excep = true;
             }
-        }while(!valid);
+        }while(excep);
+        getData(set);
+    }
+    /**
+     * Method to get user to input data for the DataSet 
+     * @param set configured DataSet object
+     */
+    public static void getData(DataSet set){
+        Scanner reader = new Scanner(System.in);
         System.out.println("Start inputting data, to exit type 'x'");
         int data;
         String input;
-        
+        boolean excep;
+        boolean exit;
         do{
             excep = false;
             exit = false;
@@ -248,7 +263,7 @@ public class RollingStatistics {
             excep = false;
             System.out.println("1)All data 2)Range of Data");
             try{
-                choice = 0;
+                //choice = 0;
                 choice = reader.nextInt();
                 switch(choice){
                     case 1:
@@ -292,7 +307,7 @@ public class RollingStatistics {
                         getStatistics(low, high, set);
                         break;
                     default:
-                        System.out.println("Invalid option choice: 1)All data 2)Range of Data");
+                        System.out.println("Invalid option - input again:");
                         excep = true;
                 }
             }
@@ -301,19 +316,27 @@ public class RollingStatistics {
                 reader.next();
                 excep = true;
             }
-            System.out.println("Type 1 to choose statistic viewing option again (any other character to exit)");
-            try{
-                input = reader.next();
-                if(input.equals("1")){
-                    excep = true;
+            if(!excep){
+                System.out.println("Type 1 to choose statistic viewing option again (any other character to exit)");
+                try{
+                    input = reader.next();
+                    if(input.equals("1")){
+                        excep = true;
+                    }
                 }
-            }
-            catch(InputMismatchException a){
-                System.out.println("invalid input");
+                catch(InputMismatchException a){
+                    System.out.println("invalid input");
+                }
             }
         }while(excep);
         
     }
+    /**
+     * Method to analyse the statistics based on the DataSet created by the user
+     * @param low The index of the lowest data point for comparison 
+     * @param high The index of the highest data point for comparison
+     * @param set The data set for comparison
+     */
     public static void getStatistics(int low, int high, DataSet set){
         boolean excep;
         Scanner reader = new Scanner(System.in);
@@ -322,7 +345,7 @@ public class RollingStatistics {
         do{
             int choice;
             excep = false;
-            System.out.println("1)View data 2)Sum 3)Median 4)Mean 5)Standard Deviation ('x' to exit)");
+            System.out.println("1)View data 2)Sum 3)Median 4)Mean 5)Standard Deviation 6)Add data ('x' to exit)");
             try{
                 input = reader.next();
                 if(input.equals("x")){
@@ -348,18 +371,21 @@ public class RollingStatistics {
                             case 5:
                                 System.out.println("Standard Deviation: " + set.getStandardDeviation(low,high));
                                 break;
+                            case 6:
+                                getData(set);
+                                break;
                             default:
-                                System.out.println("Invalid input - Choose from: 1)View data 2)Sum 3)Median 4)Mean 5)Standard Deviation ('x' to exit)");
+                                System.out.println("Invalid input - please choose option or 'x' to exit");
                         }
                     }
                     catch(NumberFormatException a){
-                        System.out.println("Invalid input, please enter data value or 'x' to exit");
+                        System.out.println("Invalid input, please choose option or 'x' to exit");
                         excep = true;
                     }
                 }
             }
             catch(InputMismatchException a){
-                
+                throw new Error("Error");
             }
         }while(!exit||excep);
     }
