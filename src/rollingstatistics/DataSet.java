@@ -36,7 +36,7 @@ public class DataSet {
      */
     public void outputData(int low, int high){
         for(;low<=high;low++){
-            System.out.println(dataSet.get(low).getData() + ":    " + dataSet.get(low).getTimestamp());
+            System.out.println(String.format("%-20s %s", String.format("%-5s %s", low, dataSet.get(low).getData()), dataSet.get(low).getTimestamp()));
         }
     }
     /**
